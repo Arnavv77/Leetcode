@@ -1,20 +1,24 @@
 class Solution {
 public:
-    inline static int suf[100];
     int firstStableIndex(vector<int>& nums, int k) {
         int n = nums.size();
-        suf[n - 1] = nums.back();
+        vector<int> suffix(n, 0);
 
-        for (int i = n - 2; i >= 0; i--)
-            suf[i] = min(suf[i + 1], nums[i]);        
-
-        int maxSoFar = 0;
-        for (int i = 0; i < n; i++) {
-            maxSoFar = max(maxSoFar, nums[i]);
-            if (maxSoFar - suf[i] <= k)
-                return i;
+        int mn = INT_MAX; 
+        // Build suffix minimum
+        for (int i = n - 1; i >= 0; i--){
+            mn = min(mn, nums[i]);
+            suffix[i] = mn;
         }
-
+ 
+        int mx = 0;
+        // Find first index with score <= k
+        for (int i = 0; i < n; i++){
+            mx = max(mx, nums[i]);
+            int score = mx - suffix[i];
+            if (score <= k) return i;
+        }
+ 
         return -1;
     }
 };
